@@ -22,19 +22,21 @@ local K_Stuff = {
     Green = Color3.fromRGB(137, 243, 54), -- [#89f336] | Lime-Green *Figma 2025
     Blue = Color3.fromRGB(35, 35, 255), -- [#2323ff] | Neon-Blue *Figma 2025
     Purple = Color3.fromRGB(98, 0, 238), -- [#6200EE] | K-Dev
-    Black = Color3.fromRGB(10, 10, 8) -- [#0A0A08] | K-Dev
+    Black = Color3.fromRGB(10, 10, 8), -- [#0A0A08] | K-Dev
+    White = Color3.fromRGB(255, 255, 255) -- White for light theme
   }
 }
 
 local UI_Theme = {
-  dark = {
+  Dark = {
     Main = Color3.fromRGB(0, 0, 0),
-    Border = Color3.fromRGB(52, 52, 52)
+    Border = Color3.fromRGB(52, 52, 52),
+    TextColor = K_Stuff.K_Colors.White
   },
-  light = {
+  Light = {
     Main = Color3.fromRGB(204, 204, 214),
-    Secondary = Color3.fromRGB(240, 240, 240),
-    Border = Color3.fromRGB(52, 52, 52)
+    Border = Color3.fromRGB(52, 52, 52),
+    TextColor = K_Stuff.K_Colors.Black
   }
 }
 
@@ -49,6 +51,8 @@ local NotificationColors = {
 -- Function to create a notification
 local function createNotification(title, description, notifType)
   local color = NotificationColors[notifType] or K_Stuff.K_Colors.Black
+  local theme = UI_Theme[_G.Theme] or UI_Theme.Dark
+
   local notif = Instance.new("ScreenGui")
   notif.Name = "KNotification"
   notif.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
@@ -56,9 +60,9 @@ local function createNotification(title, description, notifType)
   local frame = Instance.new("Frame")
   frame.Size = UDim2.new(0, 300, 0, 100)
   frame.Position = UDim2.new(1, -320, 1, -120)
-  frame.BackgroundColor3 = color
+  frame.BackgroundColor3 = theme.Main
   frame.BorderSizePixel = 2
-  frame.BorderColor3 = UI_Theme.dark.Border
+  frame.BorderColor3 = theme.Border
   frame.Parent = notif
 
   local titleLabel = Instance.new("TextLabel")
@@ -67,7 +71,7 @@ local function createNotification(title, description, notifType)
   titleLabel.Position = UDim2.new(0, 0, 0, 0)
   titleLabel.BackgroundTransparency = 1
   titleLabel.TextScaled = true
-  titleLabel.TextColor3 = K_Stuff.K_Colors.Black
+  titleLabel.TextColor3 = color -- Title color based on notification type
   titleLabel.Font = Enum.Font.SourceSansBold
   titleLabel.Parent = frame
 
@@ -77,7 +81,7 @@ local function createNotification(title, description, notifType)
   descriptionLabel.Position = UDim2.new(0, 0, 0.3, 0)
   descriptionLabel.BackgroundTransparency = 1
   descriptionLabel.TextScaled = true
-  descriptionLabel.TextColor3 = K_Stuff.K_Colors.Black
+  descriptionLabel.TextColor3 = theme.TextColor -- Description text color based on theme
   descriptionLabel.Font = Enum.Font.SourceSans
   descriptionLabel.Parent = frame
 
