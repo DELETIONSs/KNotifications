@@ -16,15 +16,15 @@
 
 ]]
 
-local K-Stuff = {
-  K-Colors = {
-    Red: Color3.fromRGB(255, 84, 73) -- [#FF5449] | K-Dev
-    Orange: #ff5c00, -- [##ff5c00] | Neon-Orange *Figma 2025 (https://www.figma.com/colors/neon-orange/)
-    Yellow: #ffde21, -- [#ffde21] | Yellow *Figma 2025 (https://www.figma.com/colors/yellow/)
-    Green: #89f336, -- [#89f336] | Lime-Green *Figma 2025 (https://www.figma.com/colors/lime-green/)
-    Blue: #2323ff, -- [#2323ff] | Neon-Blue *Figma 2025 (https://www.figma.com/colors/neon-blue/)
-    Purple: #6200EE, -- [#6200EE] | K-Dev 
-    Black: #0A0A08; --[#0A0A08] | K-Dev 
+local K_Stuff = {
+  K_Colors = {
+    Red = Color3.fromRGB(255, 84, 73), -- [#FF5449] | K-Dev
+    Orange = Color3.fromRGB(255, 92, 0), -- [#ff5c00] | Neon-Orange *Figma 2025
+    Yellow = Color3.fromRGB(255, 222, 33), -- [#ffde21] | Yellow *Figma 2025
+    Green = Color3.fromRGB(137, 243, 54), -- [#89f336] | Lime-Green *Figma 2025
+    Blue = Color3.fromRGB(35, 35, 255), -- [#2323ff] | Neon-Blue *Figma 2025
+    Purple = Color3.fromRGB(98, 0, 238), -- [#6200EE] | K-Dev
+    Black = Color3.fromRGB(10, 10, 8) -- [#0A0A08] | K-Dev
   }
 }
 
