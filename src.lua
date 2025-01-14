@@ -22,23 +22,24 @@ local K_Stuff = {
     Green = Color3.fromRGB(137, 243, 54), -- [#89f336] | Lime-Green *Figma 2025
     Blue = Color3.fromRGB(35, 35, 255), -- [#2323ff] | Neon-Blue *Figma 2025
     Purple = Color3.fromRGB(98, 0, 238), -- [#6200EE] | K-Dev
-    Black = Color3.fromRGB(10, 10, 8) -- [#0A0A08] | K-Dev
+    Black = Color3.fromRGB(10, 10, 8), -- [#0A0A08] | K-Dev
+    White = Color3.fromRGB(255, 255, 255) -- White for light theme
   }
 }
 
 local UI_Theme = {
-  dark = {
+  Dark = {
     Main = Color3.fromRGB(0, 0, 0),
-    Border = Color3.fromRGB(52, 52, 52)
+    Border = Color3.fromRGB(52, 52, 52),
+    TextColor = K_Stuff.K_Colors.White
   },
-  light = {
+  Light = {
     Main = Color3.fromRGB(204, 204, 214),
-    Secondary = Color3.fromRGB(240, 240, 240),
-    Border = Color3.fromRGB(52, 52, 52)
+    Border = Color3.fromRGB(52, 52, 52),
+    TextColor = K_Stuff.K_Colors.Black
   }
 }
 
-local NotificationTypes = {"Info", "Warning", "Alert", "Error"}
 local NotificationColors = {
   Info = K_Stuff.K_Colors.Blue,
   Warning = K_Stuff.K_Colors.Yellow,
@@ -46,19 +47,25 @@ local NotificationColors = {
   Error = K_Stuff.K_Colors.Red
 }
 
+local notificationStack = {} -- Keeps track of active notifications
+local spacing = 110 -- Vertical spacing between notifications
+
 -- Function to create a notification
 local function createNotification(title, description, notifType)
   local color = NotificationColors[notifType] or K_Stuff.K_Colors.Black
+  local theme = UI_Theme[_G.Theme] or UI_Theme.Dark
+  local lifetime = 5 -- Duration in seconds
+
   local notif = Instance.new("ScreenGui")
   notif.Name = "KNotification"
   notif.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
   local frame = Instance.new("Frame")
   frame.Size = UDim2.new(0, 300, 0, 100)
-  frame.Position = UDim2.new(1, -320, 1, -120)
-  frame.BackgroundColor3 = color
+  frame.Position = UDim2.new(1, -320, 1, -#notificationStack * spacing - 120)
+  frame.BackgroundColor3 = theme.Main -- Background color based on theme
   frame.BorderSizePixel = 2
-  frame.BorderColor3 = UI_Theme.dark.Border
+  frame.BorderColor3 = theme.Border
   frame.Parent = notif
 
   local titleLabel = Instance.new("TextLabel")
@@ -67,8 +74,8 @@ local function createNotification(title, description, notifType)
   titleLabel.Position = UDim2.new(0, 0, 0, 0)
   titleLabel.BackgroundTransparency = 1
   titleLabel.TextScaled = true
-  titleLabel.TextColor3 = K_Stuff.K_Colors.Black
-  titleLabel.Font = Enum.Font.SourceSansBold
+  titleLabel.TextColor3 = color -- Title color based on notification type
+  titleLabel.Font = Enum.Font.Roboto -- Set to Roboto font
   titleLabel.Parent = frame
 
   local descriptionLabel = Instance.new("TextLabel")
@@ -77,14 +84,51 @@ local function createNotification(title, description, notifType)
   descriptionLabel.Position = UDim2.new(0, 0, 0.3, 0)
   descriptionLabel.BackgroundTransparency = 1
   descriptionLabel.TextScaled = true
-  descriptionLabel.TextColor3 = K_Stuff.K_Colors.Black
-  descriptionLabel.Font = Enum.Font.SourceSans
+  descriptionLabel.TextColor3 = theme.TextColor -- Description text color based on theme
+  descriptionLabel.Font = Enum.Font.Roboto -- Set to Roboto font
   descriptionLabel.Parent = frame
 
-  -- Auto-remove notification after 5 seconds
-  task.delay(5, function()
-    notif:Destroy()
+  -- Create progress bar
+  local progressBar = Instance.new("Frame")
+  progressBar.Size = UDim2.new(1, 0, 0.05, 0)
+  progressBar.Position = UDim2.new(0, 0, 0.95, 0)
+  progressBar.BackgroundColor3 = color -- Progress bar color based on notification type
+  progressBar.BorderSizePixel = 0
+  progressBar.Parent = frame
+
+  -- Animate progress bar
+  local startTime = tick()
+  local function updateProgress()
+    local elapsedTime = tick() - startTime
+    local progress = math.clamp(1 - (elapsedTime / lifetime), 0, 1)
+    progressBar.Size = UDim2.new(progress, 0, 0.05, 0)
+
+    if progress <= 0 then
+      notif:Destroy()
+      table.remove(notificationStack, table.find(notificationStack, frame))
+      for i, notifFrame in ipairs(notificationStack) do
+        notifFrame:TweenPosition(UDim2.new(1, -320, 1, -i * spacing - 120), "Out", "Quad", 0.5, true)
+      end
+    end
+  end
+
+  -- Hover behavior
+  frame.MouseEnter:Connect(function()
+    frame:TweenPosition(UDim2.new(1, -420, 1, -#notificationStack * spacing - 120), "Out", "Quad", 0.3, true)
   end)
+  frame.MouseLeave:Connect(function()
+    frame:TweenPosition(UDim2.new(1, -320, 1, -#notificationStack * spacing - 120), "Out", "Quad", 0.3, true)
+  end)
+
+  -- Run the update loop for the progress bar
+  spawn(function()
+    while notif.Parent do
+      updateProgress()
+      task.wait(0.1)
+    end
+  end)
+
+  table.insert(notificationStack, frame)
 end
 
 -- Create KNotification table with methods
