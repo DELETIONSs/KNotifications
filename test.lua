@@ -40,7 +40,6 @@ local UI_Theme = {
   }
 }
 
-local NotificationTypes = {"Info", "Warning", "Alert", "Error"}
 local NotificationColors = {
   Info = K_Stuff.K_Colors.Blue,
   Warning = K_Stuff.K_Colors.Yellow,
@@ -60,7 +59,7 @@ local function createNotification(title, description, notifType)
   local frame = Instance.new("Frame")
   frame.Size = UDim2.new(0, 300, 0, 100)
   frame.Position = UDim2.new(1, -320, 1, -120)
-  frame.BackgroundColor3 = theme.Main
+  frame.BackgroundColor3 = theme.Main -- Background color based on theme
   frame.BorderSizePixel = 2
   frame.BorderColor3 = theme.Border
   frame.Parent = notif
