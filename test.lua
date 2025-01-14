@@ -51,6 +51,7 @@ local NotificationColors = {
 local function createNotification(title, description, notifType)
   local color = NotificationColors[notifType] or K_Stuff.K_Colors.Black
   local theme = UI_Theme[_G.Theme] or UI_Theme.Dark
+  local lifetime = 5 -- Duration in seconds
 
   local notif = Instance.new("ScreenGui")
   notif.Name = "KNotification"
@@ -84,9 +85,32 @@ local function createNotification(title, description, notifType)
   descriptionLabel.Font = Enum.Font.SourceSans
   descriptionLabel.Parent = frame
 
-  -- Auto-remove notification after 5 seconds
-  task.delay(5, function()
-    notif:Destroy()
+  -- Create progress bar
+  local progressBar = Instance.new("Frame")
+  progressBar.Size = UDim2.new(1, 0, 0.05, 0)
+  progressBar.Position = UDim2.new(0, 0, 0.95, 0)
+  progressBar.BackgroundColor3 = color -- Progress bar color based on notification type
+  progressBar.BorderSizePixel = 0
+  progressBar.Parent = frame
+
+  -- Animate progress bar
+  local startTime = tick()
+  local function updateProgress()
+    local elapsedTime = tick() - startTime
+    local progress = math.clamp(1 - (elapsedTime / lifetime), 0, 1)
+    progressBar.Size = UDim2.new(progress, 0, 0.05, 0)
+
+    if progress <= 0 then
+      notif:Destroy()
+    end
+  end
+
+  -- Run the update loop for the progress bar
+  spawn(function()
+    while notif.Parent do
+      updateProgress()
+      task.wait(0.1)
+    end
   end)
 end
 
