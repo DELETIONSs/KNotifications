@@ -50,6 +50,17 @@ local NotificationColors = {
 local notificationStack = {} -- Keeps track of active notifications
 local spacing = 110 -- Vertical spacing between notifications
 
+-- Function to create gradient for progress bar
+local function createGradient(color)
+  local gradient = Instance.new("UIGradient")
+  gradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, color),
+    ColorSequenceKeypoint.new(1, Color3.new(1, 1, 1)) -- Fade to white
+  }
+  gradient.Rotation = 0 -- Horizontal gradient
+  return gradient
+end
+
 -- Function to create a notification
 local function createNotification(title, description, notifType)
   local color = NotificationColors[notifType] or K_Stuff.K_Colors.Black
@@ -88,13 +99,16 @@ local function createNotification(title, description, notifType)
   descriptionLabel.Font = Enum.Font.Roboto -- Set to Roboto font
   descriptionLabel.Parent = frame
 
-  -- Create progress bar
+  -- Create progress bar with gradient
   local progressBar = Instance.new("Frame")
   progressBar.Size = UDim2.new(1, 0, 0.05, 0)
   progressBar.Position = UDim2.new(0, 0, 0.95, 0)
-  progressBar.BackgroundColor3 = color -- Progress bar color based on notification type
+  progressBar.BackgroundColor3 = color -- Base color (gradient will override this)
   progressBar.BorderSizePixel = 0
   progressBar.Parent = frame
+
+  local gradient = createGradient(color)
+  gradient.Parent = progressBar
 
   -- Animate progress bar
   local startTime = tick()
