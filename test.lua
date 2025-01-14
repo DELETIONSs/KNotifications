@@ -29,13 +29,13 @@ local K_Stuff = {
 
 local UI_Theme = {
   Dark = {
-    Main = Color3.fromRGB(0, 0, 0),
+    Main = Color3.fromRGB(30, 30, 30),
     Border = Color3.fromRGB(52, 52, 52),
     TextColor = K_Stuff.K_Colors.White
   },
   Light = {
-    Main = Color3.fromRGB(204, 204, 214),
-    Border = Color3.fromRGB(52, 52, 52),
+    Main = Color3.fromRGB(230, 230, 240),
+    Border = Color3.fromRGB(200, 200, 200),
     TextColor = K_Stuff.K_Colors.Black
   }
 }
@@ -49,6 +49,8 @@ local NotificationColors = {
 
 local notificationStack = {} -- Keeps track of active notifications
 local spacing = 110 -- Vertical spacing between notifications
+local padding = 10 -- Padding inside each notification
+local cornerRadius = UDim.new(0, 8) -- Rounded corner size
 
 -- Function to create gradient for progress bar
 local function createGradient(color)
@@ -79,10 +81,23 @@ local function createNotification(title, description, notifType)
   frame.BorderColor3 = theme.Border
   frame.Parent = notif
 
+  local corner = Instance.new("UICorner")
+  corner.CornerRadius = cornerRadius
+  corner.Parent = frame
+
+  local shadow = Instance.new("ImageLabel")
+  shadow.BackgroundTransparency = 1
+  shadow.Image = "rbxassetid://1316045217" -- Shadow image
+  shadow.Size = UDim2.new(1, 10, 1, 10)
+  shadow.Position = UDim2.new(0, -5, 0, -5)
+  shadow.ImageTransparency = 0.5
+  shadow.ZIndex = 0
+  shadow.Parent = frame
+
   local titleLabel = Instance.new("TextLabel")
   titleLabel.Text = title
-  titleLabel.Size = UDim2.new(1, 0, 0.3, 0)
-  titleLabel.Position = UDim2.new(0, 0, 0, 0)
+  titleLabel.Size = UDim2.new(1, -padding * 2, 0.3, 0)
+  titleLabel.Position = UDim2.new(0, padding, 0, padding)
   titleLabel.BackgroundTransparency = 1
   titleLabel.TextScaled = true
   titleLabel.TextColor3 = color -- Title color based on notification type
@@ -91,8 +106,8 @@ local function createNotification(title, description, notifType)
 
   local descriptionLabel = Instance.new("TextLabel")
   descriptionLabel.Text = description
-  descriptionLabel.Size = UDim2.new(1, 0, 0.7, 0)
-  descriptionLabel.Position = UDim2.new(0, 0, 0.3, 0)
+  descriptionLabel.Size = UDim2.new(1, -padding * 2, 0.7, -padding)
+  descriptionLabel.Position = UDim2.new(0, padding, 0.3, 0)
   descriptionLabel.BackgroundTransparency = 1
   descriptionLabel.TextScaled = true
   descriptionLabel.TextColor3 = theme.TextColor -- Description text color based on theme
@@ -109,6 +124,10 @@ local function createNotification(title, description, notifType)
 
   local gradient = createGradient(color)
   gradient.Parent = progressBar
+
+  local cornerProgress = Instance.new("UICorner")
+  cornerProgress.CornerRadius = cornerRadius
+  cornerProgress.Parent = progressBar
 
   -- Animate progress bar
   local startTime = tick()
