@@ -47,6 +47,9 @@ local NotificationColors = {
   Error = K_Stuff.K_Colors.Red
 }
 
+local notificationStack = {} -- Keeps track of active notifications
+local spacing = 110 -- Vertical spacing between notifications
+
 -- Function to create a notification
 local function createNotification(title, description, notifType)
   local color = NotificationColors[notifType] or K_Stuff.K_Colors.Black
@@ -59,7 +62,7 @@ local function createNotification(title, description, notifType)
 
   local frame = Instance.new("Frame")
   frame.Size = UDim2.new(0, 300, 0, 100)
-  frame.Position = UDim2.new(1, -320, 1, -120)
+  frame.Position = UDim2.new(1, -320, 1, -#notificationStack * spacing - 120)
   frame.BackgroundColor3 = theme.Main -- Background color based on theme
   frame.BorderSizePixel = 2
   frame.BorderColor3 = theme.Border
@@ -102,8 +105,20 @@ local function createNotification(title, description, notifType)
 
     if progress <= 0 then
       notif:Destroy()
+      table.remove(notificationStack, table.find(notificationStack, frame))
+      for i, notifFrame in ipairs(notificationStack) do
+        notifFrame:TweenPosition(UDim2.new(1, -320, 1, -i * spacing - 120), "Out", "Quad", 0.5, true)
+      end
     end
   end
+
+  -- Hover behavior
+  frame.MouseEnter:Connect(function()
+    frame:TweenPosition(UDim2.new(1, -420, 1, -#notificationStack * spacing - 120), "Out", "Quad", 0.3, true)
+  end)
+  frame.MouseLeave:Connect(function()
+    frame:TweenPosition(UDim2.new(1, -320, 1, -#notificationStack * spacing - 120), "Out", "Quad", 0.3, true)
+  end)
 
   -- Run the update loop for the progress bar
   spawn(function()
@@ -112,6 +127,8 @@ local function createNotification(title, description, notifType)
       task.wait(0.1)
     end
   end)
+
+  table.insert(notificationStack, frame)
 end
 
 -- Create KNotification table with methods
