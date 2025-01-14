@@ -39,3 +39,10 @@ local UI-Theme = {
   Border: #343434,
   }
 }
+local NotificationTypes = ["Info","Warning","Alert","Error"]
+local NotificationColors = {
+    Info = K_Stuff.K_Colors.Blue,
+    Warning = K_Stuff.K_Colors.Yellow,
+    Alert = K_Stuff.K_Colors.Orange,
+    Error = K_Stuff.K_Colors.Red
+  }
