@@ -72,7 +72,7 @@ local function createNotification(title, description, notifType)
   titleLabel.BackgroundTransparency = 1
   titleLabel.TextScaled = true
   titleLabel.TextColor3 = color -- Title color based on notification type
-  titleLabel.Font = Enum.Font.SourceSansBold
+  titleLabel.Font = Enum.Font.Roboto -- Set to Roboto font
   titleLabel.Parent = frame
 
   local descriptionLabel = Instance.new("TextLabel")
@@ -82,7 +82,7 @@ local function createNotification(title, description, notifType)
   descriptionLabel.BackgroundTransparency = 1
   descriptionLabel.TextScaled = true
   descriptionLabel.TextColor3 = theme.TextColor -- Description text color based on theme
-  descriptionLabel.Font = Enum.Font.SourceSans
+  descriptionLabel.Font = Enum.Font.Roboto -- Set to Roboto font
   descriptionLabel.Parent = frame
 
   -- Create progress bar
